@@ -1,0 +1,802 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Glog.AI",
+          "organization": "Glog.AI",
+          "fullName": "Glog, Making software more secure",
+          "version": "1.0.0",
+          "semanticVersion": "1.0.0",
+          "informationUri": "https://www.glog.ai",
+          "rules": [
+            {
+              "id": "glog-0ca9db7e-31bf-4531-886c-8788da5fb0ed",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(val.data(), bsr_val_C, sizeof(T))`, if the size of `bsr_val_C` is larger than `val.data()`, it can lead to a buffer overflow.\n\nBuffer overflow vulnerabilities can lead to various security issues such as data corruption, system crash, or even arbitrary code execution.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the source and destination buffers before calling `memcpy`.\n\nAdditionally, consider using safer alternatives to `memcpy` such as `strncpy` or `memcpy_s` (in C11) which include the size of the destination as a parameter, reducing the risk of buffer overflow.\n\n## Source Code Fix Recommendation\n\nHere is a recommended fix for the provided code snippet:\n\n```cpp\nif(sizeof(val.data()) >= sizeof(bsr_val_C)) {\n    memcpy(val.data(), bsr_val_C, sizeof(T));\n} else {\n    // Handle error: destination buffer is too small\n}\n```\n\nIn this fix, we first check if the size of the destination buffer `val.data()` is larger or equal to the size of the source `bsr_val_C`. If it is, we proceed with the `memcpy`. If not, we handle the error appropriately.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C standard library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-c4526f57-077e-45d6-9918-1b6404bb97d1",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet `memcpy(rev, v, sizeof(v))`, if the size of `v` is larger than the size of `rev`, it can lead to a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the source and destination buffers before calling `memcpy`. Also, consider using safer alternatives to `memcpy` such as `strncpy` or `memcpy_s` which include a size parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code snippet using `strncpy`:\n\n```cpp\n#include <cstring>\n\nchar rev[SIZE];\nchar v[SIZE];\n\n// Ensure v is null-terminated\nv[SIZE - 1] = '\\0';\n\nstrncpy(rev, v, sizeof(rev));\nrev[sizeof(rev) - 1] = '\\0';\n```\n\nIn this code, `strncpy` is used instead of `memcpy` and the size of the destination buffer `rev` is passed as the size parameter. This ensures that no more than `SIZE` characters are copied from `v` to `rev`, preventing a buffer overflow. The null character is explicitly added at the end of `rev` to ensure it is null-terminated.\n\n## Library Dependencies\n\nThe code example requires the `<cstring>` library for the `strncpy` function.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [Common Weakness Enumeration (CWE-120)](https://cwe.mitre.org/data/definitions/120.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-98de980b-9765-4fdb-b41a-6ae7f32d1f15",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe vulnerability in question is related to the `memcpy` function in C++. This function is used to copy a block of memory from one location to another. The vulnerability arises when the size of the destination buffer is less than the size of the source buffer. This can lead to buffer overflow, which can cause the program to crash or, in some cases, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflow.\n\n## Source Code Fix Recommendation\n\nIn the provided code snippet, the size of the destination buffer `col.data()` is not checked before calling `memcpy`. This can be fixed by adding a size check before the `memcpy` call:\n\n```cpp\nif (sizeof(col.data()) >= sizeof(bsr_col_ind_C)) {\n    memcpy(col.data(), bsr_col_ind_C, sizeof(J));\n} else {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example provided does not include enough context to determine the exact library dependencies. However, the `memcpy` function is part of the C standard library, so the `<cstring>` header file should be included at the top of the file:\n\n```cpp\n#include <cstring>\n```\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-514a90c4-7bb4-4d24-a020-e2500ec7ac90",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(val.data(), csr_val_C, sizeof(T))`, if the size of `csr_val_C` is larger than `val.data()`, it can lead to a buffer overflow.\n\nBuffer overflow vulnerabilities can lead to various security issues such as data corruption, system crash, or even code execution. This can allow an attacker to execute arbitrary code, potentially taking over the system.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the source and destination buffers before calling `memcpy`.\n\nAdditionally, consider using safer alternatives to `memcpy` such as `strncpy` or `memcpy_s` (in C11), which take the size of the destination buffer as an argument and ensure that no overflow occurs.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code using `strncpy`:\n\n```cpp\nif (sizeof(val.data()) >= sizeof(csr_val_C)) {\n    strncpy(val.data(), csr_val_C, sizeof(csr_val_C));\n} else {\n    // Handle error: destination buffer is too small\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C standard library (`<cstring>` in C++), so no additional libraries are needed for this code to execute.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-90b2f4ae-095e-4b88-84cc-3fdc0609769f",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe vulnerability in question is related to the `memcpy` function in C++. This function is used to copy a block of memory from one location to another. The vulnerability arises when the size of the destination buffer is less than the size of the source buffer. This can lead to buffer overflow, which can cause the program to crash or, in some cases, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflow.\n\n## Source Code Fix Recommendation\n\nIn the provided code snippet, the size of the destination buffer `col.data()` is not checked before calling `memcpy`. This can be fixed by adding a size check before the `memcpy` call:\n\n```cpp\nif (sizeof(col.data()) >= sizeof(J)) {\n    memcpy(col.data(), csr_col_ind_C, sizeof(J));\n} else {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstring>`: This library is required for the `memcpy` function.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not always be accessible."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-e1ee703c-a818-4c7a-a11a-5624e71ae774",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `malloc()` function in C is used to dynamically allocate a block of memory. If the size of the memory to be allocated is not properly validated, it can lead to various vulnerabilities such as buffer overflow, memory corruption, or denial of service. \n\nIn the provided code snippet, `malloc(ptr_type.size())`, the size of the memory to be allocated is determined by the size of `ptr_type`. If `ptr_type` is user-controlled or can be manipulated, it can lead to the aforementioned vulnerabilities.\n\n## Mitigation Advice\n\n1. Always validate the size of the memory to be allocated. Never trust user input without validation.\n2. Consider using functions that limit the amount of memory allocated, such as `calloc()`.\n3. Use modern C++ features like smart pointers (`std::unique_ptr`, `std::shared_ptr`) which automatically manage memory and help prevent memory-related issues.\n\n## Source Code Fix Recommendation\n\nInstead of using `malloc()`, consider using `new` in C++ which automatically calculates the size of the memory to be allocated.\n\n```cpp\n// Old vulnerable code\n// malloc(ptr_type.size());\n\n// Recommended fix\nptr_type* ptr = new ptr_type;\n```\n\n## Library Dependencies\n\nThe `malloc()` function is part of the C Standard Library (`stdlib.h` or `cstdlib` in C++).\n\n## References\n\n\n## Matching CWE\n\n- [CWE-131: Incorrect Calculation of Buffer Size](https://cwe.mitre.org/data/definitions/131.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            },
+            {
+              "id": "glog-b6e3fe66-0d32-4592-9111-98418c39dd0b",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `malloc()` function in C is used to dynamically allocate a block of memory. If the size of the memory to be allocated is not properly validated, it can lead to various vulnerabilities such as buffer overflow, memory corruption, or denial of service. This can happen if the size argument passed to `malloc()` is controlled by the user or is influenced by an external input.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to:\n\n1. Always validate the size of the memory to be allocated. Ensure that it is within the acceptable range and is not influenced by user input or external sources.\n2. Use functions that limit the amount of memory allocated, such as `calloc()`, which initializes the allocated memory to zero.\n3. Handle the case where `malloc()` fails and returns a NULL pointer. This can prevent null pointer dereference vulnerabilities.\n\n## Source Code Fix Recommendation\n\nHere is a simple example of how to properly use `malloc()`:\n\n```c++\n#include <stdlib.h>\n\n// Define a maximum size for the allocation\n#define MAX_SIZE 1024\n\nvoid allocate_memory(size_t size) {\n    if (size > MAX_SIZE) {\n        // Handle error: size is too large\n        return;\n    }\n\n    void* ptr = malloc(size);\n    if (ptr == NULL) {\n        // Handle error: malloc failed\n        return;\n    }\n\n    // Use the allocated memory...\n\n    // Don't forget to free the memory when you're done\n    free(ptr);\n}\n```\n\n## Library Dependencies\n\nThe `malloc()` function is part of the C standard library, so no additional libraries are needed.\n\n## References\n\n- [CWE-131: Incorrect Calculation of Buffer Size](https://cwe.mitre.org/data/definitions/131.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            },
+            {
+              "id": "glog-dc043069-4bd4-4b36-b5e1-9c82b7bfc2f5",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe vulnerability in question is related to the `malloc()` function in C++. This function is used to allocate a block of memory dynamically. If the size of the memory to be allocated is not properly validated or controlled, it can lead to various security issues such as buffer overflow, memory corruption, or denial of service.\n\nThe specific sink in question `malloc(ind_type.size())` is potentially vulnerable because it allocates memory based on the size of `ind_type`, which might be controlled by the user or an external input. If an attacker can control the size of `ind_type`, they can cause the program to allocate too much memory, leading to a denial of service, or too little memory, leading to buffer overflows.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always validate and control the size of the memory to be allocated. Never trust user input or external input without validation. Consider using functions that limit the size of the memory to be allocated, such as `calloc()`, which takes two arguments: the number of elements and the size of each element.\n\n## Source Code Fix Recommendation\n\nHere is a simple fix for the vulnerability:\n\n```cpp\n// Check if the size is within the acceptable range\nif (ind_type.size() > MAX_SIZE || ind_type.size() < MIN_SIZE) {\n    // Handle the error\n} else {\n    // Allocate the memory\n    void* ptr = malloc(ind_type.size());\n    if (ptr == NULL) {\n        // Handle the error\n    }\n}\n```\n\nIn this code, `MAX_SIZE` and `MIN_SIZE` are constants that define the acceptable range for the size of the memory to be allocated. You should define these constants according to your specific needs.\n\n## Library Dependencies\n\nThe `malloc()` function is part of the C standard library, so you don't need any additional libraries to use it.\n\n## OWASP Resources\n\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n- [OWASP C/C++ Vulnerability Guide](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-131: Incorrect Calculation of Buffer Size](https://cwe.mitre.org/data/definitions/131.html)\n- [CWE-789: Uncontrolled Memory Allocation](https://cwe.mitre.org/data/definitions/789.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            },
+            {
+              "id": "glog-69e729a4-4d46-4b16-8e83-a3b8c10299e8",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe vulnerability in question is related to the `malloc` function in C++. `malloc` is used to dynamically allocate a block of memory. The size of this block is determined by the argument passed to `malloc`. If the argument is a value that is either too large or negative, it can lead to a buffer overflow or underflow, which can be exploited to execute arbitrary code or cause a Denial of Service (DoS) attack.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always validate the size argument passed to `malloc`. This includes checking that the size is not too large and is not negative. Additionally, it is also recommended to check the return value of `malloc` to ensure that the memory allocation was successful.\n\n## Source Code Fix Recommendation\n\nHere is a simple fix for the vulnerability:\n\n```cpp\n#include <stdlib.h>\n\nif (coo_val_type.size() > 0) {\n    void* ptr = malloc(coo_val_type.size());\n    if (ptr == NULL) {\n        // Handle error\n    } else {\n        // Continue with program\n    }\n} else {\n    // Handle error\n}\n```\n\nIn this code, we first check if `coo_val_type.size()` is greater than 0. If it is not, we handle the error. If it is, we proceed to call `malloc`. After calling `malloc`, we check if the return value is `NULL`. If it is, this means that the memory allocation failed, so we handle the error. If it is not `NULL`, this means that the memory allocation was successful, so we continue with the program.\n\n## Library Dependencies\n\nThe code example requires the `stdlib.h` library to execute properly.\n\n## OWASP Resources\n\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-131: Incorrect Calculation of Buffer Size](https://cwe.mitre.org/data/definitions/131.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            },
+            {
+              "id": "glog-2e3d0500-fd6a-4c70-b8de-ce4a1349c21a",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe vulnerability in question is related to the `malloc` function in C++. `malloc` is a function that dynamically allocates memory at runtime. The problem arises when the size argument passed to `malloc` is not properly validated or controlled, which can lead to various security issues such as buffer overflows, memory corruption, or denial of service.\n\nIn the provided code snippet, `malloc(coo_col_ind_type.size())`, the size of the memory to be allocated is determined by the size of `coo_col_ind_type`. If the size of `coo_col_ind_type` is not properly controlled or validated, it can lead to the aforementioned security issues.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always validate and control the size argument passed to `malloc`. This can be done by checking the size before passing it to `malloc` and ensuring it is within a reasonable and expected range. Additionally, always check the return value of `malloc` to ensure that the memory allocation was successful.\n\n## Source Code Fix Recommendation\n\nHere is a simple fix for the provided code snippet:\n\n```cpp\nsize_t size = coo_col_ind_type.size();\nif (size > MAX_SIZE) {\n    // Handle error\n} else {\n    void* ptr = malloc(size);\n    if (ptr == NULL) {\n        // Handle error\n    } else {\n        // Continue with program\n    }\n}\n```\n\nIn this code, `MAX_SIZE` is a predefined constant that represents the maximum reasonable size for the memory allocation. This value should be defined according to the specific requirements and constraints of your program.\n\n## Library Dependencies\n\nThe `malloc` function is part of the C standard library, so no additional library dependencies are required for the provided code snippet.\n\n## References\n\n- [CWE-131: Incorrect Calculation of Buffer Size](https://cwe.mitre.org/data/definitions/131.html)\n\nPlease note that the links provided are valid and active at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            }
+          ],
+          "language": "en-US",
+          "contents": [
+            "localizedData",
+            "nonLocalizedData"
+          ],
+          "isComprehensive": false
+        }
+      },
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "glog-0ca9db7e-31bf-4531-886c-8788da5fb0ed",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparse_host.cpp"
+                },
+                "region": {
+                  "startLine": 4328,
+                  "startColumn": 4,
+                  "endLine": 4328,
+                  "endColumn": 43,
+                  "charOffset": 154409,
+                  "charLength": 39,
+                  "snippet": {
+                    "text": "memcpy(val.data(), bsr_val_C, sizeof(T)",
+                    "rendered": {
+                      "text": "memcpy(val.data(), bsr_val_C, sizeof(T)",
+                      "markdown": "`memcpy(val.data(), bsr_val_C, sizeof(T)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparse_host.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 154409,
+                        "charLength": 39
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(val.data(), <size of val.data()>,  bsr_val_C,  sizeof(T)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-c4526f57-077e-45d6-9918-1b6404bb97d1",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/src/auxiliary/rocsparse_auxiliary.cpp"
+                },
+                "region": {
+                  "startLine": 857,
+                  "startColumn": 4,
+                  "endLine": 857,
+                  "endColumn": 28,
+                  "charOffset": 22955,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "memcpy(rev, v, sizeof(v)",
+                    "rendered": {
+                      "text": "memcpy(rev, v, sizeof(v)",
+                      "markdown": "`memcpy(rev, v, sizeof(v)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "library/src/auxiliary/rocsparse_auxiliary.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 22955,
+                        "charLength": 24
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(rev, <size of rev>,  v,  sizeof(v)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-98de980b-9765-4fdb-b41a-6ae7f32d1f15",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparse_host.cpp"
+                },
+                "region": {
+                  "startLine": 4327,
+                  "startColumn": 4,
+                  "endLine": 4327,
+                  "endColumn": 47,
+                  "charOffset": 154352,
+                  "charLength": 43,
+                  "snippet": {
+                    "text": "memcpy(col.data(), bsr_col_ind_C, sizeof(J)",
+                    "rendered": {
+                      "text": "memcpy(col.data(), bsr_col_ind_C, sizeof(J)",
+                      "markdown": "`memcpy(col.data(), bsr_col_ind_C, sizeof(J)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparse_host.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 154352,
+                        "charLength": 43
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(col.data(), <size of col.data()>,  bsr_col_ind_C,  sizeof(J)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-514a90c4-7bb4-4d24-a020-e2500ec7ac90",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparse_host.cpp"
+                },
+                "region": {
+                  "startLine": 5127,
+                  "startColumn": 4,
+                  "endLine": 5127,
+                  "endColumn": 43,
+                  "charOffset": 181124,
+                  "charLength": 39,
+                  "snippet": {
+                    "text": "memcpy(val.data(), csr_val_C, sizeof(T)",
+                    "rendered": {
+                      "text": "memcpy(val.data(), csr_val_C, sizeof(T)",
+                      "markdown": "`memcpy(val.data(), csr_val_C, sizeof(T)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparse_host.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 181124,
+                        "charLength": 39
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(val.data(), <size of val.data()>,  csr_val_C,  sizeof(T)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-90b2f4ae-095e-4b88-84cc-3fdc0609769f",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparse_host.cpp"
+                },
+                "region": {
+                  "startLine": 5126,
+                  "startColumn": 4,
+                  "endLine": 5126,
+                  "endColumn": 47,
+                  "charOffset": 181068,
+                  "charLength": 43,
+                  "snippet": {
+                    "text": "memcpy(col.data(), csr_col_ind_C, sizeof(J)",
+                    "rendered": {
+                      "text": "memcpy(col.data(), csr_col_ind_C, sizeof(J)",
+                      "markdown": "`memcpy(col.data(), csr_col_ind_C, sizeof(J)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparse_host.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 181068,
+                        "charLength": 43
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(col.data(), <size of col.data()>,  csr_col_ind_C,  sizeof(J)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-e1ee703c-a818-4c7a-a11a-5624e71ae774",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (malloc)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparseio.cpp"
+                },
+                "region": {
+                  "startLine": 1433,
+                  "startColumn": 14,
+                  "endLine": 1433,
+                  "endColumn": 36,
+                  "charOffset": 77650,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "malloc(ptr_type.size()",
+                    "rendered": {
+                      "text": "malloc(ptr_type.size()",
+                      "markdown": "`malloc(ptr_type.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparseio.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 77650,
+                        "charLength": 22
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-b6e3fe66-0d32-4592-9111-98418c39dd0b",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (malloc)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparseio.cpp"
+                },
+                "region": {
+                  "startLine": 1447,
+                  "startColumn": 14,
+                  "endLine": 1447,
+                  "endColumn": 36,
+                  "charOffset": 77913,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "malloc(val_type.size()",
+                    "rendered": {
+                      "text": "malloc(val_type.size()",
+                      "markdown": "`malloc(val_type.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparseio.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 77913,
+                        "charLength": 22
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-dc043069-4bd4-4b36-b5e1-9c82b7bfc2f5",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (malloc)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparseio.cpp"
+                },
+                "region": {
+                  "startLine": 1440,
+                  "startColumn": 14,
+                  "endLine": 1440,
+                  "endColumn": 36,
+                  "charOffset": 77781,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "malloc(ind_type.size()",
+                    "rendered": {
+                      "text": "malloc(ind_type.size()",
+                      "markdown": "`malloc(ind_type.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparseio.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 77781,
+                        "charLength": 22
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-69e729a4-4d46-4b16-8e83-a3b8c10299e8",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (malloc)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparseio.cpp"
+                },
+                "region": {
+                  "startLine": 1183,
+                  "startColumn": 18,
+                  "endLine": 1183,
+                  "endColumn": 44,
+                  "charOffset": 64059,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "malloc(coo_val_type.size()",
+                    "rendered": {
+                      "text": "malloc(coo_val_type.size()",
+                      "markdown": "`malloc(coo_val_type.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparseio.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 64059,
+                        "charLength": 26
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-2e3d0500-fd6a-4c70-b8de-ce4a1349c21a",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (malloc)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/common/rocsparseio.cpp"
+                },
+                "region": {
+                  "startLine": 1177,
+                  "startColumn": 22,
+                  "endLine": 1177,
+                  "endColumn": 52,
+                  "charOffset": 63904,
+                  "charLength": 30,
+                  "snippet": {
+                    "text": "malloc(coo_col_ind_type.size()",
+                    "rendered": {
+                      "text": "malloc(coo_col_ind_type.size()",
+                      "markdown": "`malloc(coo_col_ind_type.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "clients/common/rocsparseio.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 63904,
+                        "charLength": 30
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
